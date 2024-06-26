@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, Trash2 } from 'lucide-react';
+import { PlusCircle, Trash2, Plus } from 'lucide-react';
 
 interface DayCount {
   id: string;
@@ -40,21 +40,11 @@ const DaysApp: React.FC = () => {
     setDayCounts(dayCounts.filter(item => item.id !== id));
   };
 
-  const updateDays = () => {
-    const updatedCounts = dayCounts.map(item => {
-      const startDate = new Date(item.startDate);
-      const today = new Date();
-      const diffTime = Math.abs(today.getTime() - startDate.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      return { ...item, days: diffDays };
-    });
-    setDayCounts(updatedCounts);
+  const incrementDays = (id: string) => {
+    setDayCounts(dayCounts.map(item => 
+      item.id === id ? { ...item, days: item.days + 1 } : item
+    ));
   };
-
-  useEffect(() => {
-    const interval = setInterval(updateDays, 1000 * 60 * 60); // Update every hour
-    return () => clearInterval(interval);
-  }, [dayCounts]);
 
   return (
     <div className="min-h-screen bg-black text-white p-8 font-sans">
@@ -85,10 +75,15 @@ const DaysApp: React.FC = () => {
                   <Trash2 size={20} />
                 </button>
               </div>
-              <p className="text-2xl font-bold mt-2">
-                {item.days} day{item.days !== 1 ? 's' : ''}
-                {item.days > 1 && ' 🔥'}
-              </p>
+              <div className="flex justify-between items-center mt-2">
+                <p className="text-2xl font-bold">
+                  {item.days} day{item.days !== 1 ? 's' : ''}
+                  {item.days > 1 && ' 🔥'}
+                </p>
+                <button onClick={() => incrementDays(item.id)} className="text-green-500">
+                  <Plus size={20} />
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -98,3 +93,4 @@ const DaysApp: React.FC = () => {
 };
 
 export default DaysApp;
+
